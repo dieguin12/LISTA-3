@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Definição da estrutura do restaurante
+struct Restaurante {
+    char nome[100];
+    char endereco[100];
+    float precoMedio;
+    char tipoComida[100];
+    struct Restaurante* proximo;
+};
+
+// Função para solicitar os dados de um elemento da lista
+struct Restaurante* solicitarDados() {
+    struct Restaurante* novoRestaurante = (struct Restaurante*)malloc(sizeof(struct Restaurante));
+
+    printf("Nome: ");
+    scanf(" %[^\n]", novoRestaurante->nome);
+
+    printf("Endereço: ");
+    scanf(" %[^\n]", novoRestaurante->endereco);
+
+    printf("Preço Médio: ");
+    scanf("%f", &(novoRestaurante->precoMedio));
+
+    printf("Tipo de Comida: ");
+    scanf(" %[^\n]", novoRestaurante->tipoComida);
+
+    novoRestaurante->proximo = NULL;
+
+    return novoRestaurante;
+}
+
+// Função para listar todos os dados
+void listarDados(struct Restaurante* lista) {
+    printf("==== Lista de Restaurantes ====\n");
+    while (lista != NULL) {
+        printf("Nome: %s\n", lista->nome);
+        printf("Endereço: %s\n", lista->endereco);
+        printf("Preço Médio: %.2f\n", lista->precoMedio);
+        printf("Tipo de Comida: %s\n\n", lista->tipoComida);
+        lista = lista->proximo;
+    }
+}
+
+int main() {
+    struct Restaurante* lista = NULL;
+    int opcao;
+
+    do {
+        printf("==== Menu ====\n");
+        printf("1. Adicionar restaurante\n");
+        printf("2. Listar restaurantes\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                // Solicitar dados e adicionar à lista
+                if (lista == NULL) {
+                    lista = solicitarDados();
+                } else {
+                    struct Restaurante* temp = lista;
+                    while (temp->proximo != NULL) {
+                        temp = temp->proximo;
+                    }
+                    temp->proximo = solicitarDados();
+                }
+                break;
+            case 2:
+                // Listar todos os restaurantes
+                listarDados(lista);
+                break;
+            case 0:
+                // Sair do programa
+                printf("Encerrando o programa.\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+        }
+    } while (opcao != 0);
+
+    // Liberar a memória alocada pela lista
+    struct Restaurante* atual = lista;
+    while (atual != NULL) {
+        struct Restaurante* proximo = atual->proximo;
+        free(atual);
+        atual = proximo;
+    }
+
+    return 0;
+}
